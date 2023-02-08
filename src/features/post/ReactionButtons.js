@@ -16,7 +16,7 @@ function ReactionButtons(props) {
   const reactionButtons = Object.entries(reactionEmoji).map(([name, emoji]) => {
     return (
       <button
-        key={"name"}
+        key={name}
         type={"button"}
         className={"reactionButton"}
         onClick={() => 
