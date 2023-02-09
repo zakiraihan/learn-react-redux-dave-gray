@@ -1,11 +1,7 @@
-import Counter from "./features/counter/Counter";
+import TodoList from "./features/todos/TodoList";
 
 function App() {
-  return (
-    <div className="App">
-      <Counter />
-    </div>
-  );
+  return <TodoList />
 }
 
 export default App;
