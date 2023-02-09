@@ -12,7 +12,6 @@ const PostsList = () => {
     if (postStatus === 'loading') {
         content = <p>"Loading..."</p>;
     } else if (postStatus === 'succeeded') {
-        console.log(orderedPostsIds);
         content = orderedPostsIds.map(postId => <PostsExcerpt key={postId} postId={postId} />)
     } else if (postStatus === 'failed') {
         content = <p>{error}</p>;
