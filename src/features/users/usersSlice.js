@@ -1,4 +1,5 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+
 import axios from "axios";
 
 const USERS_URL = 'https://jsonplaceholder.typicode.com/users';
@@ -22,5 +23,7 @@ const usersSlice = createSlice({
 })
 
 export const selectAllUsers = (state) => state.users;
+export const selectUsersById = (state, userId) => 
+  state.users.find(user => user.id === userId);
 
 export default usersSlice.reducer

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { deletePost, selectPostByPostId, updatePost } from './postsSlice';
+import { deletePost, selectPostById, updatePost } from './postsSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -9,7 +9,7 @@ function EditFormPost() {
   const { postId } = useParams();
   const navigate = useNavigate();
 
-  const post = useSelector((state) => selectPostByPostId(state, Number(postId)));
+  const post = useSelector((state) => selectPostById(state, Number(postId)));
   const users = useSelector(selectAllUsers);
 
   const [title, setTitle] = useState(post?.title);
@@ -29,7 +29,7 @@ function EditFormPost() {
 
   const onTitleChanged = e => setTitle(e.target.value)
   const onContentChanged = e => setContent(e.target.value)
-  const onAuthorChanged = e => setUserId(e.target.value)
+  const onAuthorChanged = e => setUserId(Number(e.target.value))
 
   const canSave = [title, content, userId].every(Boolean) && requestStatus === 'idle';
 
