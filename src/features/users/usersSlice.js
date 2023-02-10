@@ -1,29 +1,50 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createEntityAdapter, createSelector, createSlice } from "@reduxjs/toolkit";
 
+import { apiSlice } from "../api/apiSlice";
 import axios from "axios";
 
-const USERS_URL = 'https://jsonplaceholder.typicode.com/users';
+const usersAdapter = createEntityAdapter({
+  // sortComparer: (a, b) => b.id.localecompare(a.id)
+});
 
-const initialState = []
+const initialState = usersAdapter.getInitialState();
 
-export const fetchUsers = createAsyncThunk('users/fetchUsers', async () => {
-    const response = await axios.get(USERS_URL);
-    return response.data
+export const userApiSlice = apiSlice.injectEndpoints({
+  endpoints: (builder) => ({
+    getUsers: builder.query({
+      query: () => "/users",
+      transformResponse: (responseData) => 
+        usersAdapter.setAll(initialState, responseData),
+      providesTags: (result, error, arg) => [
+        { type: "User", id: "LIST" },
+        ...result.ids.map(id => ({ type: "User", id }))
+      ]
+    }),
+    getUserById: builder.query({
+      query: (id) => `/users/${id}`,
+      transformResponse: (responseData) => 
+        usersAdapter.setAll(initialState, responseData),
+      providesTags: (result, error, arg) => [
+        ...result.ids.map(id => ({ type: "User", id }))
+      ]
+    })
+  })
 })
 
-const usersSlice = createSlice({
-    name: 'users',
-    initialState,
-    reducers: {},
-    extraReducers(builder) {
-        builder.addCase(fetchUsers.fulfilled, (state, action) => {
-            return action.payload;
-        })
-    }
-})
+export const {
+  useGetUsersQuery,
+  useGetUserByIdQuery
+} = userApiSlice;
 
-export const selectAllUsers = (state) => state.users;
-export const selectUsersById = (state, userId) => 
-  state.users.find(user => user.id === userId);
+export const selectUsersResult = userApiSlice.endpoints.getUsers.select();
 
-export default usersSlice.reducer
+const selectUsersData = createSelector(
+  selectUsersResult,
+  usersResult => usersResult.data
+)
+
+export const {
+  selectAll: selectAllUsers,
+  selectById: selectUsersById,
+  selectIds: selectUserIds
+} = usersAdapter.getSelectors((state) => selectUsersData(state) ?? initialState)
